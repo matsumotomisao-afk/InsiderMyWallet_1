@@ -1,0 +1,35 @@
+@model IEnumerable<MyWallet.Models.SubjectName>
+
+@{
+    ViewData["Title"] = "Subject Names";
+}
+
+<h1>Subject Names</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>科目名</th>
+            <th>科目イメージ</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.CourseName</td>
+            <td>@item.ImageUrl</td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.SubjectNameId">Details</a> |
+                <a asp-action="Edit" asp-route-id="@item.SubjectNameId">Edit</a> |
+                <a asp-action="Delete" asp-route-id="@item.SubjectNameId">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

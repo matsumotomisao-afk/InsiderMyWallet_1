@@ -1,0 +1,43 @@
+@model IEnumerable<MyWallet.Models.Payment>
+
+@{
+    ViewData["Title"] = "Payments";
+}
+
+<h1>Payments</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Posted</th>
+            <th>Item</th>
+            <th>Payee</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Subject</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Posted.ToShortDateString()</td>
+            <td>@item.ItemName</td>
+            <td>@item.PaymentName</td>
+            <td>@item.PaymentTypeNavigation?.TypeName</td>
+            <td>@String.Format("{0:C}", item.Amount)</td>
+            <td>@item.SubjectNameNavigation?.CourseName</td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.PaymentId">Details</a> |
+                <a asp-action="Edit" asp-route-id="@item.PaymentId">Edit</a> |
+                <a asp-action="Delete" asp-route-id="@item.PaymentId">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

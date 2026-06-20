@@ -1,0 +1,27 @@
+@model MyWallet.Models.MonthlyBudget
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>MonthlyBudget</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">Year</dt>
+        <dd class="col-sm-10">@Model.YearNum</dd>
+
+        <dt class="col-sm-2">Month</dt>
+        <dd class="col-sm-10">@Model.MonthNum</dd>
+
+        <dt class="col-sm-2">Budget</dt>
+        <dd class="col-sm-10">@String.Format("{0:C}", Model.BudgetAmount)</dd>
+    </dl>
+</div>
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.MonthlyBudgetId" class="btn btn-primary">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>

@@ -1,0 +1,34 @@
+@model MyWallet.Models.MonthlyBudget
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="MonthlyBudgetId" />
+    <div class="form-group">
+        <label asp-for="YearNum" class="control-label"></label>
+        <input asp-for="YearNum" class="form-control" />
+        <span asp-validation-for="YearNum" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="MonthNum" class="control-label"></label>
+        <input asp-for="MonthNum" class="form-control" />
+        <span asp-validation-for="MonthNum" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="BudgetAmount" class="control-label"></label>
+        <input asp-for="BudgetAmount" class="form-control" />
+        <span asp-validation-for="BudgetAmount" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-primary" />
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

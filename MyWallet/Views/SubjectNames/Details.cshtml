@@ -1,0 +1,30 @@
+@model MyWallet.Models.SubjectName
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>SubjectName</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            科目名
+        </dt>
+        <dd class = "col-sm-10">
+            @Model.CourseName
+        </dd>
+        <dt class = "col-sm-2">
+            科目イメージ
+        </dt>
+        <dd class = "col-sm-10">
+            @Model.ImageUrl
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.SubjectNameId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
