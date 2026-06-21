@@ -1,12 +1,12 @@
 @model MyWallet.Models.Payment
 
 @{
-    ViewData["Title"] = "Create Payment";
+    ViewData["Title"] = "家計簿記入";
 }
 
-<h1>Create Payment</h1>
+<h1>家計簿記入</h1>
 
-<h4>Payment</h4>
+@* <h4>Payment</h4> *@
 <hr />
 <div class="row">
     <div class="col-md-6">
@@ -27,8 +27,10 @@
                 <span asp-validation-for="PaymentName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PaymentTypeId" class="control-label">Payment Type</label>
-                <select asp-for="PaymentTypeId" class="form-control" asp-items="ViewBag.PaymentTypeId"></select>
+                <label asp-for="PaymentTypeId" class="control-label">支払い方法</label>
+                <select asp-for="PaymentTypeId" class="form-control" asp-items="ViewBag.PaymentTypeId">
+                    <option value=””>選択してください</option>
+                </select>
                 <span asp-validation-for="PaymentTypeId" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -37,19 +39,21 @@
                 <span asp-validation-for="Amount" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="SubjectNameId" class="control-label">Subject</label>
-                <select asp-for="SubjectNameId" class="form-control" asp-items="ViewBag.SubjectNameId"></select>
+                <label asp-for="SubjectNameId" class="control-label">　科目名</label>
+                <select asp-for="SubjectNameId" class="form-control" asp-items="ViewBag.SubjectNameId">
+                    <option value=””>選択してください</option>
+                </select>
                 <span asp-validation-for="SubjectNameId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="登録" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">一覧に戻る</a>
 </div>
 
 @section Scripts {

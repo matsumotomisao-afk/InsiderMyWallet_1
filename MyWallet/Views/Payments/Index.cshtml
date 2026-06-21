@@ -1,25 +1,26 @@
 @model IEnumerable<MyWallet.Models.Payment>
 
 @{
-    ViewData["Title"] = "Payments";
+    ViewData["Title"] = "家計簿";
 }
 
-<h1>Payments</h1>
+<h1>家計簿一覧</h1>
 
 <p>
-    <a asp-action="Create" class="btn btn-primary">Create New</a>
+    <a asp-action="新規作成" class="btn btn-primary">Create New</a>
 </p>
 
 <table class="table">
     <thead>
         <tr>
-            <th>Posted</th>
-            <th>Item</th>
-            <th>Payee</th>
-            <th>Type</th>
-            <th>Amount</th>
-            <th>Subject</th>
+            <th>登校日</th>
             <th></th>
+            <th>科目名</th>
+            <th>品目</th>
+            <th>支払先</th>
+            <th>決済方法</th>
+            <th>金額</th>
+            
         </tr>
     </thead>
     <tbody>
@@ -27,15 +28,20 @@
     {
         <tr>
             <td>@item.Posted.ToShortDateString()</td>
+             <td>
+                <img src="~/@item.SubjectNameNavigation.ImageUrl" alt="@item.SubjectNameNavigation.CourseName" style="width:40px; height:auto" />
+            </td>
+            <td>@item.SubjectNameNavigation?.CourseName</td>　　@* //ここへ移動　 *@
+
             <td>@item.ItemName</td>
             <td>@item.PaymentName</td>
             <td>@item.PaymentTypeNavigation?.TypeName</td>
             <td>@String.Format("{0:C}", item.Amount)</td>
-            <td>@item.SubjectNameNavigation?.CourseName</td>
+            @* <td>@item.SubjectNameNavigation?.CourseName</td> *@
             <td>
-                <a asp-action="Details" asp-route-id="@item.PaymentId">Details</a> |
-                <a asp-action="Edit" asp-route-id="@item.PaymentId">Edit</a> |
-                <a asp-action="Delete" asp-route-id="@item.PaymentId">Delete</a>
+                <a asp-action="Details" asp-route-id="@item.PaymentId">詳細</a> |
+                <a asp-action="Edit" asp-route-id="@item.PaymentId">編集</a> |
+                <a asp-action="Delete" asp-route-id="@item.PaymentId">削除</a>
             </td>
         </tr>
     }
