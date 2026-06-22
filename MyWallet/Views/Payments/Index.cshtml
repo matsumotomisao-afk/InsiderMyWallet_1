@@ -2,9 +2,55 @@
 
 @{
     ViewData["Title"] = "家計簿";
+    int totalAmount = Model.Sum(p => p.Amount); 
+    // var month = DateTime.Now.Month;              // 現在の月を取得
+    // var nextMonth = month == 12 ? 1 : month + 1; // 次の月を計算 3項演算子を使用して、12月の場合は1月に戻るようにしています。
 }
 
 <h1>家計簿一覧</h1>
+<div class="row">
+    <div class="container d-flex flex-wrap justify-content-center gap-3" style="background-color: white; margin-top:5px;">
+        @* <a asp-action="Index" asp-route-num="@month" id="@month" class="btn btn-sm link-button">@($"{month}月の家計簿")</a>
+        <a asp-action="Index" asp-route-num="@nextMonth" id="@nextMonth" class="btn btn-sm link-button">@($"{nextMonth}月の家計簿")</a> *@
+        @if (ViewBag.DstnctPost != null && ViewBag.DstnctPost.Count > 0)
+        {
+            @foreach (var item in ViewBag.DstnctPost)
+            {
+
+                if (item > 0)
+                {
+                    <a asp-action="Index" asp-route-num="@item" id="@item" class="btn btn-sm link-button">
+                        @($"{item}月の家計簿")
+                    </a>
+                }
+            }
+        }
+        else
+        {
+            <p>データがありません。</p>
+        }
+
+    </div>
+    <div>
+        <hr />
+        <div class="col-md-2">
+
+        </div>
+        <div class="col-md-5"" margin: auto:>
+            <div style="width:50%; height: auto; text-align: center;">
+                <canvas id="Budget"></canvas>
+            </div>
+
+        </div>
+        <div class="col-md-5" stylle="text--align: center;">
+            <div style="width: 100%; margin: auto;">
+                <canvas id="Payment"></canvas>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 
 <p>
     
@@ -47,4 +93,52 @@
         </tr>
     }
     </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="6" style="text-align:right; font-weight:bold;">合計金額:</td>
+            <td style="font-weight:bold;">@totalAmount.ToString("C")</td>
+            <td colspan="3"></td>
+        </tr>
+    </tfoot>
+
 </table>
+
+<style>
+    .link-button {
+        display: inline-block;
+        padding: 0.25rem 0.5rem; /* btn-smのpadding */
+        font-size: 0.875rem; /* btn-smのフォントサイズ */
+        line-height: 1.5; /* btn-smの行間 */
+        border-radius: 0.2rem; /* btn-smの角丸 */
+        color: white;
+        background-color: #007bff;
+        text-decoration: none;
+        cursor: pointer;
+        text-align: center;
+        transition: background-color 0.3s ease;
+    }
+
+        .link-button:hover {
+            background-color: coral;
+        }
+
+        .link-button.active {
+            background-color: coral;
+        }
+</style>
+<script>
+        // ページ読み込み時にViewBag.CurrentMonthの値のボタンにactiveクラスを追加
+    document.addEventListener("DOMContentLoaded", function () { /*  // ページが完全に読み込まれた後に実行されるコード  */
+
+        const linked = @ViewBag.CurrentMonth;           /*// Razor構文でViewBag.CurrentMonthの値をJavaScript変数linkedに代入 */
+
+        if (linked) {                                           /*   //linked に値が入っているか確認（空や null ならスキップ）。 */
+            const activeButton = document.getElementById(linked);   /*  //取得した要素を activeButton 変数に格納。 */
+            if (activeButton) {                                     /*  //activeButton が存在するか確認 */
+                activeButton.classList.add('active');               /*  //存在すれば、その要素の classList に 'active' クラスを追加 */
+            }                                           /* //これにより、CSSで .active { ... } と定義しているスタイルが適用される */
+        }
+    });
+
+</script>
+

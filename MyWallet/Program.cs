@@ -25,6 +25,7 @@ namespace MyWallet
                 db.Database.Migrate();        // マイグレーション適用
                 db.SeedImagesFromWwwroot();    // 画像登録
                 db.SeedData(db);           // PaymentType データ登録
+                db.SeedPayment(db);        // Payment データ登録
             }
 
 

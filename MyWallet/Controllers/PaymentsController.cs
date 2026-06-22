@@ -18,12 +18,57 @@ namespace MyWallet.Controllers
         }
 
         // GET: Payments
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? num)
         {
-            var payments = _context.Payments
+            var today = DateTime.Today;                //今日の日付
+            // -------------------------------------------------------For Generate LinkButton
+                           //Paymentテーブルのposte列の月名をDistinctする（重複排除）
+
+   var dstnctPost = _context.Payments
+                    .Where(p => p.Posted.Year == today.Year) //今年のデータを抽出する
+                    .Select(p => p.Posted.Month)             //月名だけ抽出(Monthのデータ）
+                    .Distinct()               //重複を排除
+                    .OrderBy(m => m)            //昇順ソート
+                    .ToList();                //List化する
+
+
+                if (dstnctPost != null)
+                {
+
+                    ViewBag.DstnctPost = dstnctPost;   //本チュートリアルでは、Listの中に６，７、が入っている。
+                }
+                //-------------------------------------------------------End For Generate LinkButton
+
+
+            if (num == null)
+            {
+
+
+                var firstDayOfMonth = new DateTime(today.Year, today.Month, 1); //今年の今月の1日を取得
+                var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1); //今月の末日を取得
+
+                ViewBag.CurrentMonth = today.Month; //現在の月をViewBagに格納
+
+                var payments = _context.Payments
+                    .Include(p => p.PaymentTypeNavigation)
+                    .Include(p => p.SubjectNameNavigation)
+                    .Where(p => p.Posted >= firstDayOfMonth && p.Posted <= lastDayOfMonth);//支払日が今月の1日から末日までのデータに絞り込む
+
+                return View(await payments.ToListAsync());
+            }
+            else
+            {
+                var firstDayOfMonth = new DateTime(today.Year, num.Value, 1); //今年の指定された月の1日を取得
+                var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1); //指定された月の末日を取得
+
+                ViewBag.CurrentMonth = num.Value;  //指定された月をViewBagに格納
+
+                var payments = _context.Payments
                 .Include(p => p.PaymentTypeNavigation)
-                .Include(p => p.SubjectNameNavigation);
-            return View(await payments.ToListAsync());
+                .Include(p => p.SubjectNameNavigation)
+                .Where(p => p.Posted >= firstDayOfMonth && p.Posted <= lastDayOfMonth);//支払日が指定された月の1日から末日までのデータに絞り込む
+                return View(await payments.ToListAsync());
+            }
         }
 
         // GET: Payments/Details/5
@@ -43,6 +88,17 @@ namespace MyWallet.Controllers
         // GET: Payments/Create
         public IActionResult Create()
         {
+            var today = DateTime.Today;                //今日の日付
+            var firstDayOfMonth = new DateTime(today.Year, today.Month, 1); //今年の今月の1日を取得
+            var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1); //今月の末日を取得
+
+            var applicationDbContext = _context.Payments
+                .Include(p => p.SubjectNameNavigation)
+                .Include(p => p.PaymentTypeNavigation)
+                .Where(p => p.Posted >= firstDayOfMonth && p.Posted <= lastDayOfMonth);  //支払日が今月の1日から末日までのデータに絞り込む
+
+            ViewData["PaymentHistory"] = applicationDbContext.ToList();//ToList() を呼び出すとSQLが実行されます取得したデータをViewData[PaymentHistory]にobject化する
+
             ViewData["PaymentTypeId"] = new SelectList(_context.PaymentTypes, "PaymentTypeId", "TypeName");
             ViewData["SubjectNameId"] = new SelectList(_context.SubjectNames, "SubjectNameId", "CourseName");
             return View();

@@ -72,5 +72,34 @@ namespace MyWallet.Data
                     db.PaymentTypes.AddRange(paymentTypes);// データベースに保存
                     db.SaveChanges();                    // 変更を保存
         }
+
+        public void SeedPayment(MyWalletContext db)
+        {
+            if (db.Payments.Any()) return; // データが既に存在する場合はスキップ
+
+            var today = DateTime.Today;                //今日の日付
+            var thisYear = today.Year;                   //今年の年を取得
+            var thisMonth = today.Month;                  //今年の月を取得
+            var nextMonth = thisMonth == 12 ? 1 : thisMonth + 1; //次の月を計算（12月の場合は1月に戻る）
+
+            // 起動時に挿入する初期データ
+            var payments = new List<Payment>
+             {
+                 //PaymentIdは自動生成されるため、指定しない
+                 new Payment { Posted = new DateTime(thisYear,thisMonth, 05), ItemName = "電気代", PaymentName = "中国電力", Amount = 15000, PaymentTypeId = 5, SubjectNameId = 10 },
+                 new Payment { Posted = new DateTime(thisYear, thisMonth, 06), ItemName = "スーツ", PaymentName = "山本洋服店", Amount = 75000, PaymentTypeId = 3, SubjectNameId = 13 },
+                 new Payment { Posted = new DateTime(thisYear, thisMonth, 08), ItemName = "牛肉", PaymentName = "ABCストア", Amount = 1200, PaymentTypeId = 2, SubjectNameId = 16},
+                 new Payment { Posted = new DateTime(thisYear, thisMonth, 11), ItemName = "住宅ローン", PaymentName = "中国銀行", Amount = 70000, PaymentTypeId = 5, SubjectNameId = 3},
+                 new Payment { Posted = new DateTime(thisYear, thisMonth, 13), ItemName = "玉ねぎ、にんじん等", PaymentName = "ABCストア", Amount = 2300, PaymentTypeId = 2, SubjectNameId = 16},
+                 new Payment { Posted = new DateTime(thisYear, nextMonth, 05), ItemName = "ワイン、ビール", PaymentName = "ABCストア", Amount = 4300, PaymentTypeId = 2, SubjectNameId = 16 },
+                 new Payment { Posted = new DateTime(thisYear, nextMonth, 08), ItemName = "ガス代", PaymentName = "ABCガス", Amount = 13000, PaymentTypeId = 5, SubjectNameId = 10},
+                 new Payment { Posted = new DateTime(thisYear, nextMonth, 11), ItemName = "住宅ローン", PaymentName = "中国銀行", Amount = 75000, PaymentTypeId = 5, SubjectNameId = 3 },
+                 new Payment { Posted = new DateTime(thisYear, nextMonth, 15), ItemName = "キャベツ、醤油他調味料", PaymentName = "ABCストア", Amount = 5500, PaymentTypeId = 2, SubjectNameId = 16 },
+                 new Payment { Posted = new DateTime(thisYear, nextMonth, 18), ItemName = "牛乳、ピーマン、豆腐他", PaymentName = "ABCマーケット", Amount = 6700, PaymentTypeId = 2, SubjectNameId = 16 }
+              };
+            db.Payments.AddRange(payments); // データベースに保存
+            db.SaveChanges();             // 変更を保存}
+        }
+
     }
 }
