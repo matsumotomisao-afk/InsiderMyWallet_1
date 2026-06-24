@@ -1,21 +1,21 @@
 @model IEnumerable<MyWallet.Models.MonthlyBudget>
 
 @{
-    ViewData["Title"] = "Monthly Budgets";
+    ViewData["Title"] = "月次予算一覧";
 }
 
-<h1>Monthly Budgets</h1>
+<h1>月次予算一覧</h1>
 
 <p>
-    <a asp-action="Create" class="btn btn-primary">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">新規作成</a>
 </p>
 
 <table class="table">
     <thead>
         <tr>
-            <th>Year</th>
-            <th>Month</th>
-            <th>Budget</th>
+            <th>年号</th>
+            <th>月名</th>
+            <th>予算金額</th>
             <th></th>
         </tr>
     </thead>
@@ -27,9 +27,9 @@
             <td>@item.MonthNum</td>
             <td>@String.Format("{0:C}", item.BudgetAmount)</td>
             <td>
-                <a asp-action="Details" asp-route-id="@item.MonthlyBudgetId">Details</a> |
-                <a asp-action="Edit" asp-route-id="@item.MonthlyBudgetId">Edit</a> |
-                <a asp-action="Delete" asp-route-id="@item.MonthlyBudgetId">Delete</a>
+                <a asp-action="Details" asp-route-id="@item.MonthlyBudgetId">詳細</a> |
+                <a asp-action="Edit" asp-route-id="@item.MonthlyBudgetId">編集</a> |
+                <a asp-action="Delete" asp-route-id="@item.MonthlyBudgetId">削除 </a>
             </td>
         </tr>
     }

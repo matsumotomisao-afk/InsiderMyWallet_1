@@ -18,6 +18,7 @@ namespace MyWallet.Controllers
         // GET: MonthlyBudgets
         public async Task<IActionResult> Index()
         {
+
             return View(await _context.MonthlyBudgets.ToListAsync());
         }
 
@@ -36,6 +37,10 @@ namespace MyWallet.Controllers
         // GET: MonthlyBudgets/Create
         public IActionResult Create()
         {
+            var myWalletContext = _context.MonthlyBudgets;   //MonthlyBudgetテーブルからデータを抽出するためのクエリを作成
+
+            ViewData["BudgetHistory"] = myWalletContext.ToList();　　//抽出したデータをViewDataオブジェクトに入れてViewで利用する
+
             return View();
         }
 
@@ -46,11 +51,23 @@ namespace MyWallet.Controllers
         {
             if (ModelState.IsValid)
             {
+                // 重複チェック（既に同じ値が存在するか）
+                bool exists = _context.MonthlyBudgets.Any(m => m.MonthNum == monthlyBudget.MonthNum);  //MonthlyBudgetテーブルから、ユーザーが入力した月と同じ月が既に存在するかを確認するクエリを作成
+                if (exists)
+                {
+                    ModelState.AddModelError("MonthNum", "この月は既に登録されています。");  //同じ月が既に存在する場合、ModelStateにエラーメッセージを追加する
+
+                    var myWalletContext = _context.MonthlyBudgets; //MonthlyBudgetテーブルからデータを抽出するためのクエリを作成
+                    ViewData["BudgetHistory"] = myWalletContext.ToList();  //抽出したデータをViewDataオブジェクトに入れてViewで利用する履歴表示のために必須です。
+                    return View();
+                }
+
                 _context.Add(monthlyBudget);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Create));
             }
-            return View(monthlyBudget);
+            //return View(monthlyBudget);
+            return RedirectToAction(nameof(Create));
         }
 
         // GET: MonthlyBudgets/Edit/5

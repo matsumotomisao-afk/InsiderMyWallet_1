@@ -5,6 +5,14 @@
     int totalAmount = Model.Sum(p => p.Amount); 
     // var month = DateTime.Now.Month;              // 現在の月を取得
     // var nextMonth = month == 12 ? 1 : month + 1; // 次の月を計算 3項演算子を使用して、12月の場合は1月に戻るようにしています。
+     int yosan = 0;
+    int zandaka = 0;
+    if (ViewBag.ThisMonthBudget != null)
+    {
+        yosan = ViewBag.ThisMonthBudget;
+        zandaka = yosan - totalAmount;
+    }
+
 }
 
 <h1>家計簿一覧</h1>
@@ -19,7 +27,7 @@
 
                 if (item > 0)
                 {
-                    <a asp-action="Index" asp-route-num="@item" id="@item" class="btn btn-sm link-button">
+                    <a asp-action="Index" asp-route-num="@item" id="@item" class="btn btn-sm link-button">　　　@* //DstnctPostの値をループして、各月のボタンを生成 *@
                         @($"{item}月の家計簿")
                     </a>
                 }
@@ -31,18 +39,23 @@
         }
 
     </div>
-    <div>
+    <div class="row">
         <hr />
         <div class="col-md-2">
+            <div>
+                <h5>  予算額:  @String.Format("{0:C}", yosan)</h5>
+                <h5>支出計：@String.Format("{0:C}", Model.Sum(a => a.Amount))</h5>
+                <h5>残高：@String.Format("{0:C}", zandaka)</h5>
+            </div>
 
         </div>
-        <div class="col-md-5"" margin: auto:>
+        <div class="col-md-5" style="margin: auto;">
             <div style="width:50%; height: auto; text-align: center;">
                 <canvas id="Budget"></canvas>
             </div>
 
         </div>
-        <div class="col-md-5" stylle="text--align: center;">
+        <div class="col-md-5" style="text-align: center;">
             <div style="width: 100%; margin: auto;">
                 <canvas id="Payment"></canvas>
             </div>
@@ -141,4 +154,77 @@
     });
 
 </script>
+<script>
+       //Paymentデータをグラフ表示
+      const ctpay = document.getElementById('Payment').getContext('2d');
+        new Chart(ctpay, {
+            type: 'bar', //棒グラフ
+
+            data: {
+                labels: @Html.Raw(Json.Serialize(ViewBag.Labels)), // ラベル
+                datasets: [{
+                    data: @Html.Raw(Json.Serialize(ViewBag.Data)), // データ
+                    label: '科目別支払い状況',
+                    backgroundColor: [　　　　　　　　　　　//データ配列の 各要素に対応する色 を順番に適用します。要素が多い場合、色が繰り返されます。　　　　　　　
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(255,20,147,0.2)',
+                        'rgba(0,255,255,0.2)'
+                    ],
+                     borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(255,20,147,1)',
+                        'rgba(0,255,255,1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+             options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                }
+            }
+    })
+</script>
+<script>
+    //予算と残金をグラフ表示
+    const ctbud = document.getElementById('Budget').getContext('2d');
+    new Chart(ctbud, {
+        type: 'doughnut', //ドーナツグラフ
+        data: {
+            labels: ['予算', '残金'], // ラベル
+            datasets: [{
+                data: [@yosan, @zandaka], // データ
+                label: '予算と残金',
+                backgroundColor: [　　　　　　　　　　　//データ配列の 各要素に対応する色 を順番に適用します。要素が多い場合、色が繰り返されます。　　　　　　　
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)'
+                ],
+                 borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+         options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+            }
+        }
+});
+</script>
+
+
 

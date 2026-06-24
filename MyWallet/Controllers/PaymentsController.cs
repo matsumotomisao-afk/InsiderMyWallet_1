@@ -16,6 +16,26 @@ namespace MyWallet.Controllers
         {
             _context = context;
         }
+        public void GenerateChartData(List<Payment> payments)
+        {
+            //--------------------------------------------------------------------------------For Chart
+            var xData = payments                        //支払日が今月の1日から末日までのデータに絞り込んだ後のデータをもとに、科目名ごとの合計金額を集計する 
+                .Where(x => x.SubjectNameNavigation != null)       //SubjectNameNavigationがnullでないデータに絞り込む
+                .GroupBy(x => x.SubjectNameNavigation!.CourseName)   //SubjectNameNavigationのCourseNameをグループ化のキーとして使用する
+                .Select(g => new                                      //グループ化されたデータをもとに、ラベルとデータのペアを作成する
+                {
+                    labels = g.Key,                                 //グループ化のキー（科目名）をラベルとして使用する
+                    data = g.Sum(x => x.Amount)                     //グループ内のAmountを合計してデータとする
+                })
+                .ToList();
+            // ラベルとデータを分離
+            var xlabels = xData.Select(x => x.labels).ToList();  // xlabels には、xData の全要素から labels だけを集めたリストが入ります。
+            var xdata = xData.Select(x => x.data).ToList();      // xdata には、xData の全要素から data だけを集めたリストが入ります。
+            ViewBag.Labels = xlabels;
+            ViewBag.Data = xdata;
+            //-------------------------End For Chart
+
+        }
 
         // GET: Payments
         public async Task<IActionResult> Index(int? num)
@@ -49,10 +69,24 @@ namespace MyWallet.Controllers
 
                 ViewBag.CurrentMonth = today.Month; //現在の月をViewBagに格納
 
+
+
                 var payments = _context.Payments
                     .Include(p => p.PaymentTypeNavigation)
                     .Include(p => p.SubjectNameNavigation)
                     .Where(p => p.Posted >= firstDayOfMonth && p.Posted <= lastDayOfMonth);//支払日が今月の1日から末日までのデータに絞り込む
+
+                GenerateChartData(payments.ToList()); //チャート用のデータを生成するメソッドを呼び出す)
+
+                //-------現在月の予算（Budget）を取得,チャート用データ
+                var budget = _context.MonthlyBudgets
+                      .Where(b => b.YearNum == today.Year && b.MonthNum == today.Month) //今年、今月でフィルターする
+                      .Select(b => b.BudgetAmount)    //今年、今月の予算額を取得
+                      .FirstOrDefault();
+                ViewBag.ThisMonthBudget = budget;
+                //-----------End 予算取得
+
+
 
                 return View(await payments.ToListAsync());
             }
@@ -67,6 +101,18 @@ namespace MyWallet.Controllers
                 .Include(p => p.PaymentTypeNavigation)
                 .Include(p => p.SubjectNameNavigation)
                 .Where(p => p.Posted >= firstDayOfMonth && p.Posted <= lastDayOfMonth);//支払日が指定された月の1日から末日までのデータに絞り込む
+
+                GenerateChartData(payments.ToList());
+
+                //-------選択月の予算（Budget）を取得,チャート用データ
+                var budget = _context.MonthlyBudgets
+                      .Where(b => b.YearNum == today.Year && b.MonthNum == num.Value)
+                      .Select(b => b.BudgetAmount)
+                      .FirstOrDefault();
+                ViewBag.ThisMonthBudget = budget;
+                //-----------End 予算取得
+
+
                 return View(await payments.ToListAsync());
             }
         }
